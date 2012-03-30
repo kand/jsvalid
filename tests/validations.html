@@ -12,7 +12,7 @@
 				
 				// define validations
 				var validations = [
-					{select:'#testForm input',validate:jsvalid.required},
+					{select:'#testForm input',validate:'required'},
 					{select:'#textIn1',
 					validate:function(results, $element){
 						if($element.val() !== 'valid value'){
@@ -37,7 +37,7 @@
 	<body>
 
 		<form id="testForm" name="testForm" method="POST">
-			<label for="textIn1">Text Input 1: </label><input id="textIn1" name="textIn1" type="text"/><br>
+			<label for="textIn1">Text Input 1</label>: <input id="textIn1" name="textIn1" type="text"/><br>
 			
 			<button id="testFormSubmit" type="submit">Submit</button><br>
 		</form>

@@ -14,6 +14,13 @@ var jsvalid = (function($){
 		// select elements with given selector		
 		var elements = $(select);
 
+		// if validate is a string user looking for api defined function, find related messages in api
+		if(typeof(validate) === 'string' && jsvalid.messages.valid[validate]){
+			validMessage = jsvalid.messages.valid[validate];
+		} else if(typeof(validate) === 'string' && jsvalid.messages.invalid[validate]){
+			invalidMessage = jsvalid.messages.invalid[validate];
+		}
+
 		return {
 			elements: elements,
 			validate: validate,
@@ -65,7 +72,6 @@ var jsvalid = (function($){
 		return false;
 	};
 
-
 	/**
 	 * Validate a given list of validations.
 	 *
@@ -92,8 +98,15 @@ var jsvalid = (function($){
 			for(var j = 0;j < jlen;j++){
 				var $ele = $(vinput.elements[j]);
 				var eleId = '#' + $ele.prop('id');
-				// run validation
-				var valid = vinput.validate(results,$ele);
+				var valid = false;
+				// check if validation is a string referring to a function in jsvalid
+				if(typeof(vinput.validate) === 'string' && jsvalid[vinput.validate]){
+					// run api defined
+					valid = jsvalid[vinput.validate](results,$ele);
+				} else {
+					// run user defined validation
+					valid = vinput.validate(results,$ele);
+				}
 				// create validation object based on validation result
 				if(valid) result = new _buildResult(eleId,true,vinput.validMessage);
 				else result = new _buildResult(eleId,false,vinput.invalidMessage); 
@@ -107,6 +120,12 @@ var jsvalid = (function($){
 	};
 
 	return {
+		messages: {
+			valid: {},
+			invalid: {
+				required: '{0} is required!'
+			}
+		},
 		validate: _validate,
 		required: _validateRequired
 	};
