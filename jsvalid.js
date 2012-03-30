@@ -88,9 +88,9 @@ var jsvalid = (function($){
 			var v = validations[i];
 			var vinput = new _buildInput(v.select,v.validate,v.validMessage,v.invalidMessage);					
 			// run validations on each element
-			var len = vinput.elements.length;
-			for(var i = 0;i < len;i++){
-				var $ele = $(vinput.elements[i]);
+			var jlen = vinput.elements.length;
+			for(var j = 0;j < jlen;j++){
+				var $ele = $(vinput.elements[j]);
 				var eleId = '#' + $ele.prop('id');
 				// run validation
 				var valid = vinput.validate(results,$ele);
