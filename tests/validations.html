@@ -12,12 +12,10 @@
 				
 				// define validations
 				var validations = [
-					{select:'#testForm input',validate:required},
+					{select:'#testForm input',validate:jsvalid.required},
 					{select:'#textIn1',
-					validate:function(results, element){
-						var len = elements.length;
-						var $this = $(elements);
-						if($this.val() !== 'valid value'){
+					validate:function(results, $element){
+						if($element.val() !== 'valid value'){
 							return false;
 						}
 						return true;
@@ -26,8 +24,13 @@
 					invalidMessage:'The value of {0} must be "valid value".'}
 				];	
 
-				// run validations
-				validate(validations);
+				// override form submit
+				$testForm.submit(function(e){
+					e.preventDefault();
+					// run validations
+					var results = jsvalid.validate(validations);
+					$(document).append(results.length);
+				});
 			});
 		</script>
 	</head>
