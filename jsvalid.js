@@ -50,10 +50,11 @@ var jsvalid = (function($){
 			message = message.replace('\{' + i + '\}', name);
 			
 			// check for message args	
-			if(messageArgs){	
-				var len = messageArgs.length;
+			if(messageArgs){
+				var len = messageArgs.length + 1;
+				i++;
 				for(i;i < len;i++){
-					message = message.replace('\{' + i  + '\}', messageArgs[i]);
+					message = message.replace('\{' + i  + '\}', messageArgs[i - 1]);
 				}	
 			}
 		}
@@ -142,14 +143,16 @@ var jsvalid = (function($){
 			var v = validations[i];
 
 			// parse out validation if it is a string
-			var func = null;
+			var func = {
+				name: v.validate, 
+				args: []
+			};
 			if(typeof(v.validate) === 'string'){
 				func = _parseArgs(v.validate);
-				v.validate = func.name;
 			} 
 
 			// get validation object
-			var vinput = new _buildInput(v.select,v.validate,v.validMessage,v.invalidMessage);					
+			var vinput = new _buildInput(v.select,func.name,v.validMessage,v.invalidMessage);					
 			// run validations on each element
 			var jlen = vinput.elements.length;
 			for(var j = 0;j < jlen;j++){
@@ -166,8 +169,9 @@ var jsvalid = (function($){
 				}
 
 				// create validation object based on validation result
-				if(valid) result = new _buildResult(eleId,true,vinput.validMessage);
-				else result = new _buildResult(eleId,false,vinput.invalidMessage); 
+				var args = func ? func.args : null;
+				if(valid) result = new _buildResult(eleId,true,vinput.validMessage,args);
+				else result = new _buildResult(eleId,false,vinput.invalidMessage,args);
 
 				// add result to results list
 				results.push(result);
