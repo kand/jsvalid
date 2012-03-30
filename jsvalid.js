@@ -17,7 +17,8 @@ var jsvalid = (function($){
 		// if validate is a string user looking for api defined function, find related messages in api
 		if(typeof(validate) === 'string' && jsvalid.messages.valid[validate]){
 			validMessage = jsvalid.messages.valid[validate];
-		} else if(typeof(validate) === 'string' && jsvalid.messages.invalid[validate]){
+		}
+		if(typeof(validate) === 'string' && jsvalid.messages.invalid[validate]){
 			invalidMessage = jsvalid.messages.invalid[validate];
 		}
 
@@ -36,23 +37,59 @@ var jsvalid = (function($){
 	 * 	valid = true if field is valid, false otherwise 
 	 *	message = message related to validation
 	 */
-	var _buildResult = function(selector,valid,message){
-		var REPLACE_REGEX = /\{0\}/;
-		
+	var _buildResult = function(selector,valid,message,messageArgs){
 		// get the name of the element from the label
 		var eleId = $(selector).prop('id');
 		var $label = $('label[for="' + eleId + '"]');
 		var name = $label.html();	
 		// make sure valid is a boolean value
 		valid = valid ? true : false;
-		// replace regex matches in messsage with field name
-		if(message) message = message.replace(REPLACE_REGEX,name);
+		// replace regex matches in messsage with field name and args
+		if(message){
+			var i = 0;
+			message = message.replace('\{' + i + '\}', name);
+			
+			// check for message args	
+			if(messageArgs){	
+				var len = messageArgs.length;
+				for(i;i < len;i++){
+					message = message.replace('\{' + i  + '\}', messageArgs[i]);
+				}	
+			}
+		}
 
 		return {
 			name: name,
 			selector: selector,
 			valid: valid,
 			message: message
+		};
+	};
+
+	/**
+	 * Parse the arguments out of a given validate string. The string should be of the format:
+	 *	apiValidationName(arg1,arg2,arg3)
+	 *
+	 * returns an object with the following format:
+	 *	name = name of the function to run
+	 * 	args = a list of arguments to use when running the function
+	 */
+	var _parseArgs = function(inputStr){
+		var funcName = inputStr;
+		var args = [];
+		// find open and close paretheses
+		var op = inputStr.search(/\(/);
+		var cp = inputStr.search(/\)/);
+		if(op > -1 && cp > -1){
+			funcName = inputStr.substring(0,op);
+			// found both paretheses, parse substring
+			var strArgs = inputStr.substring(op + 1,cp);
+			args = strArgs.split(',');
+		}
+
+		return {
+			name: funcName,
+			args: args
 		};
 	};
 
@@ -64,11 +101,23 @@ var jsvalid = (function($){
 	 *
 	 * returns true if has value, false otherwise
 	 */
-	var _validateRequired = function(results, $element){
+	var _validateRequired = function(results, $element, args){
 		var trimmedVal = $.trim($element.val());
-		if(trimmedVal.length > 0){
-			return true;
-		}
+		if(trimmedVal.length > 0) return true;
+		return false;
+	};
+
+	/**
+	 * Validate a field for being less than a given length.
+	 *
+	 * results = results from validations already run
+	 * $element = element to run validation on
+	 * args = a list where the first value is the max number of characters allowed
+	 *
+	 * returns true if length is less than given max, false otherwise
+	 */
+	var _validateLength = function(results, $element, args){
+		if($element.val().length < args[0]) return true;
 		return false;
 	};
 
@@ -89,9 +138,17 @@ var jsvalid = (function($){
 		var results = [];
 
 		var len = validations.length;
-		for(var i = 0;i < len;i++){
-			// get validation object
+		for(var i = 0;i < len;i++){	
 			var v = validations[i];
+
+			// parse out validation if it is a string
+			var func = null;
+			if(typeof(v.validate) === 'string'){
+				func = _parseArgs(v.validate);
+				v.validate = func.name;
+			} 
+
+			// get validation object
 			var vinput = new _buildInput(v.select,v.validate,v.validMessage,v.invalidMessage);					
 			// run validations on each element
 			var jlen = vinput.elements.length;
@@ -99,17 +156,19 @@ var jsvalid = (function($){
 				var $ele = $(vinput.elements[j]);
 				var eleId = '#' + $ele.prop('id');
 				var valid = false;
-				// check if validation is a string referring to a function in jsvalid
-				if(typeof(vinput.validate) === 'string' && jsvalid[vinput.validate]){
+
+				if(func && jsvalid[func.name]){
 					// run api defined
-					valid = jsvalid[vinput.validate](results,$ele);
+					valid = jsvalid[func.name](results,$ele,func.args);
 				} else {
 					// run user defined validation
 					valid = vinput.validate(results,$ele);
 				}
+
 				// create validation object based on validation result
 				if(valid) result = new _buildResult(eleId,true,vinput.validMessage);
 				else result = new _buildResult(eleId,false,vinput.invalidMessage); 
+
 				// add result to results list
 				results.push(result);
 			}
@@ -121,12 +180,17 @@ var jsvalid = (function($){
 
 	return {
 		messages: {
-			valid: {},
+			valid: {
+				required: '{0} has a value!',
+				length: '{0} is less than {1} characters!'
+			},
 			invalid: {
-				required: '{0} is required!'
+				required: '{0} is required!',
+				length: '{0} must be less than {1} characters!'
 			}
 		},
 		validate: _validate,
-		required: _validateRequired
+		required: _validateRequired,
+		length: _validateLength
 	};
 })($);
