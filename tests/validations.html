@@ -13,7 +13,7 @@
 				// define validations
 				var validations = [
 					{select:'#testForm input',validate:'required'},
-					{select:'#textIn2',validate:'length(10)'},
+					{select:'#textIn2',validate:'lengthRange(2,10)'},
 					{select:'#textIn1',
 					validate:function(results, $element){
 						if($element.val() === 'valid value'){

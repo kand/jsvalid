@@ -15,10 +15,10 @@ var jsvalid = (function($){
 		var elements = $(select);
 
 		// if validate is a string user looking for api defined function, find related messages in api
-		if(typeof(validate) === 'string' && jsvalid.messages.valid[validate]){
+		if(!validMessage && typeof(validate) === 'string' && jsvalid.messages.valid[validate]){
 			validMessage = jsvalid.messages.valid[validate];
 		}
-		if(typeof(validate) === 'string' && jsvalid.messages.invalid[validate]){
+		if(!invalidMessage && typeof(validate) === 'string' && jsvalid.messages.invalid[validate]){
 			invalidMessage = jsvalid.messages.invalid[validate];
 		}
 
@@ -109,16 +109,20 @@ var jsvalid = (function($){
 	};
 
 	/**
-	 * Validate a field for being less than a given length.
+	 * Validate a field for having a value within given range.
 	 *
 	 * results = results from validations already run
 	 * $element = element to run validation on
-	 * args = a list where the first value is the max number of characters allowed
+	 * args = a list where the first value is the min number of characters allowed, second
+	 * 	value is the max number of characters allowed
 	 *
-	 * returns true if length is less than given max, false otherwise
+	 * returns true if length is within given range, false otherwise
 	 */
-	var _validateLength = function(results, $element, args){
-		if($element.val().length < args[0]) return true;
+	var _validateLengthRange = function(results, $element, args){
+		var minLen = args[0];
+		var maxLen = args[1];
+		var eleLen = $element.val().length;
+		if(minLen <= eleLen && eleLen <= maxLen) return true;
 		return false;
 	};
 
@@ -186,15 +190,15 @@ var jsvalid = (function($){
 		messages: {
 			valid: {
 				required: '{0} has a value!',
-				length: '{0} is less than {1} characters!'
+				lengthRange: '{0} has between {1} and {2} characters!'
 			},
 			invalid: {
 				required: '{0} is required!',
-				length: '{0} must be less than {1} characters!'
+				lengthRange: '{0} must have between {1} and {2} characters!'
 			}
 		},
 		validate: _validate,
 		required: _validateRequired,
-		length: _validateLength
+		lengthRange: _validateLengthRange
 	};
 })($);
