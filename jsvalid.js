@@ -203,7 +203,7 @@ var jsvalid = (function($){
 	 * returns a list of objects in this format:
 	 * 	{
 	 *	message: validation message related to if the field is valid (string)
-	 * 	name: validated field name which is the html in a field's label (string),
+	 *	name: validated field name which is the html in a field's label (string),
 	 *	selector: selector that can be used to find the validated field (string),
 	 *	signature: signature of the validation funciton run (string),
 	 *	valid: is the field valid (boolean),
