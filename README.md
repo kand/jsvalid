@@ -29,8 +29,8 @@ given to the validation function.
 
 <h2>API Defined Validations</h2>
 <pre><code>required = returns true if input has a value, false otherwise
-lengthRange(x,y) = returns true if input value has length L where x < L < y, false otherwise
-pattern(p) = returns true if input matches given pattern p, false otherwise, p follows this syntax&#58;
+lengthRange(x,y) = returns true if input value has length L where x &lt; L &gt; y, false otherwise
+pattern(p) = returns true if input matches given pattern p, false otherwise, p follows this syntax:
 	@ = any character A-Z or a-z
 	# = any number 0-9
 	? = any character
