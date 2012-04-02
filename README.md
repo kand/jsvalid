@@ -3,7 +3,8 @@ Simple Javascript validation framework built off jQuery.
 Define a list of validations to run then call validate(validations).
 
 Each validation within the list is an object following this pattern:
-'''	{
+'''
+	\{
 		select: jQuery selector to use for this validation. (string),
 		validate: either a string representing an api defined validation or a custom validation
 			function to run on each selected element. (string or func),
@@ -12,7 +13,8 @@ Each validation within the list is an object following this pattern:
 			own validation function, or to the name of the api function run. (string) (optional),
 		validMessage: message to give user when validation succeeds. (string),
 		invalidMessage: message to give user when validation fails. (string)
-	}'''
+	\}
+'''
 
 The validate function is run individually on each input selected. This function takes in 2 arguments:
 	results = results list from validations that have already been run
