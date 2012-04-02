@@ -101,20 +101,54 @@ var jsvalid = (function($){
 	};
 
 	/**
+	 * Validate a field for having a value less than or equal to given length.
+	 *
+	 * results = results from validations already run
+	 * $element = element to run validation on 
+	 * args = a list where:
+	 *	[0] = maximum number of characters allowed
+	 * 
+	 * returns true if length is less than or equal to given value, false otherwise
+	 */
+	var _validateLengthMax = function(results, $element, args){
+		var maxLen = args[0];
+		var eleLen = $element.val().length;
+		if(eleLen <= maxLen) return true;
+		return false;
+	};
+
+	/**
+	 * Validate a field for having a value greater than or equal to given length.
+	 *
+	 * results = results from validations already run
+	 * $element = element to run validation on 
+	 * args = a list where:
+	 *	[0] = minimum number of characters allowed
+	 * 
+	 * returns true if length is greater than or equal to given value, false otherwise
+	 */
+	var _validateLengthMin = function(results, $element, args){
+		var minLen = args[0];
+		var eleLen = $element.val().length;
+		if(minLen <= eleLen) return true;
+		return false;
+	};
+
+	/**
 	 * Validate a field for having a value within given range.
 	 *
 	 * results = results from validations already run
 	 * $element = element to run validation on
-	 * args = a list where the first value is the min number of characters allowed, second
-	 * 	value is the max number of characters allowed
+	 * args = a list where:
+	 * 	[0] = minimum number of characters allowed
+	 *	[1] = maximum number of characters allowed
 	 *
 	 * returns true if length is within given range, false otherwise
 	 */
 	var _validateLengthRange = function(results, $element, args){
-		var minLen = args[0];
-		var maxLen = args[1];
-		var eleLen = $element.val().length;
-		if(minLen <= eleLen && eleLen <= maxLen) return true;
+		var minValid = _validateLengthMin(results, $element, [args[0]]);
+		var maxValid = _validateLengthMax(results, $element, [args[1]]);
+		if(minValid && maxValid) return true;
 		return false;
 	};
 
@@ -189,7 +223,7 @@ var jsvalid = (function($){
 	 *	message: validation message related to if the field is valid (string)
 	 *	name: validated field name which is the html in a field's label (string),
 	 *	selector: selector that can be used to find the validated field (string),
-	 *	signature: signature of the validation funciton run (string),
+	 *	signature: signature of the validation function run (string),
 	 *	valid: is the field valid (boolean),
 	 *	}	
 	 */
