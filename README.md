@@ -18,7 +18,8 @@ Each validation within the list is an object following this pattern:
 
 The validate function is run individually on each input selected. This function takes in 2 arguments:
 <pre><code><b>results</b> = results list from validations that have already been run
-<b>$element</b> = current element to be validated</code></pre>
+<b>$element</b> = current element to be validated
+<b>args</b> = a list of arguments defined in the validateArgs parameter of the validation</code></pre>
 
 The signature value can be used to later identify what validations have been run. Keep this value associated
 	to validated field somewhere--on the validation message within html or in javascript perhaps--to be
