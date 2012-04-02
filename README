@@ -11,7 +11,7 @@ Each validation within the list is an object following this pattern:
 		select: jQuery selector to use for this validation. (string),
 		validate: either a string representing an api defined validation or a custom validation
 			function to run on each selected element. (string or func),
-		validateArgs: a list that can be used to pass arguments to a custom user function. (string) (optional),
+		args: a list of arguments that is passed into the validation function. (string) (optional),
 		signature: signature to assign this validation, allows you to keep track of what validators
 			have been run. If not defined, will default to either 'undefined' if using your
 			own validation function, or to the name of the api function run. (string) (optional),
@@ -22,7 +22,7 @@ Each validation within the list is an object following this pattern:
 The validate function is run individually on each input selected. This function takes in 3 arguments:
 	results = results list from validations that have already been run
 	$element = current element to be validated
-	args = a list of arguments defined in the validateArgs parameter of the validation
+	args = a list of arguments defined in the args parameter of the validation
 
 The signature value can be used to later identify what validations have been run. Keep this value associated
 	to validated field somewhere--on the validation message within html or in javascript perhaps--to be
@@ -44,5 +44,3 @@ API Defined Validations
 
 TODO
 ----
-- Custom user functions need ability to pass arguments to valid/invalid message
-- Arguments to validate string need ability to contain commas

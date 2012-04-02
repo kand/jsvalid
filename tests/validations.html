@@ -24,7 +24,7 @@
 					// validation using api defined required function
 					{select:'#testForm input',validate:'required'},
 					// validation using api defined lengthRange function
-					{select:'#textIn2',validate:'lengthRange(2,10)'},
+					{select:'#textIn2',validate:'lengthRange',args:[2,10]},
 					// validation using custom user defined function
 					{select:'#textIn1',
 						validate:function(results, $element, args){
@@ -34,15 +34,18 @@
 							}
 							return false;
 						},
-						validateArgs:['i need a valid value!'],
+						args:['i need a valid value!'],
 						signature: 'customSig',
 						validMessage:'The value of {0} is valid!',
-						invalidMessage:'The value of {0} must be {1}.'},
+						invalidMessage:'The value of {0} must be "{1}".'},
 					// validation using api defined pattern function
-					{select:'#textIn3',validate:'pattern(@@@-###-???-abc)'},
+					{select:'#textIn3',validate:'pattern',args:['@@@-###-???-abc']},
 					// validation using api defined lengthRange function with custom validation
 					//	signature and validation messages
-					{select:'#textIn1',validate:'lengthRange(2,10)',signature:'customRangeSig',
+					{select:'#textIn1',
+						validate:'lengthRange',
+						args:[2,50],
+						signature:'customRangeSig',
 						validMessage: 'This is a custom range VALID message for {0}!',
 						invalidMessage: 'This is custom range INVALID message for {0}!'}
 				];

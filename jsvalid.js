@@ -11,11 +11,12 @@ var jsvalid = (function($){
 	 * returns an object representing a validation input. Has the following properties:
 	 * 	elements = selected elements to run validations on
 	 *	validate = function to use for validation on each element in selection
+	 *	args = a list of arguments to pass to validate function
 	 *	signature = signature of validation run
 	 * 	validMessage = message to return if validate returns true
 	 *	invalidMessage = message to return if validate returns false
 	 */
-	var _buildInput = function(select,validate,signature,validMessage,invalidMessage){
+	var _buildInput = function(select,validate,args,signature,validMessage,invalidMessage){
 		// select elements with given selector		
 		var elements = $(select);
 
@@ -35,6 +36,7 @@ var jsvalid = (function($){
 		return {
 			elements: elements,
 			validate: validate,
+			args: args,
 			signature: signature,
 			validMessage: validMessage,
 			invalidMessage: invalidMessage
@@ -82,34 +84,7 @@ var jsvalid = (function($){
 			valid: valid,
 			message: message
 		};
-	};
-
-	/**
-	 * Parse the arguments out of a given validate string. The string should be of the format:
-	 *	apiValidationName(arg1,arg2,arg3)
-	 *
-	 * returns an object with the following format:
-	 *	name = name of the function to run
-	 * 	args = a list of arguments to use when running the function
-	 */
-	var _parseArgs = function(inputStr){
-		var funcName = inputStr;
-		var args = [];
-		// find open and close paretheses
-		var op = inputStr.search(/\(/);
-		var cp = inputStr.search(/\)/);
-		if(op > -1 && cp > -1){
-			funcName = inputStr.substring(0,op);
-			// found both paretheses, parse substring
-			var strArgs = inputStr.substring(op + 1,cp);
-			args = strArgs.split(',');
-		}
-
-		return {
-			name: funcName,
-			args: args
-		};
-	};
+	};	
 
 	/**
 	 * Validate a field for a value. Strings containing only spaces are invalid.
@@ -202,7 +177,7 @@ var jsvalid = (function($){
 	 *	{
 	 *	select: selector to use to find elements to apply validations to (string),
 	 *	validate: a string or function specifying what validation to use (string or function),
-	 *	validateArgs: a list of arguments to pass into a user defined validate function (list) (optional),
+	 *	args: a list of arguments to into validate function (list),
 	 *	signature: a function signature to give the validation, allows you to track what validations
 	 *		were run (string) (optional),
 	 *	validMessage: message to give when validation succeeds (string) (optional),
@@ -226,19 +201,8 @@ var jsvalid = (function($){
 		for(var i = 0;i < len;i++){	
 			var v = validations[i];
 
-			// parse out validation if it is a string
-			var func = {
-				name: v.validate, 
-				args: []
-			};
-			if(typeof(v.validate) === 'string'){
-				func = _parseArgs(v.validate);
-			} else {
-				func.args = v.validateArgs;
-			} 
-
 			// get validation object
-			var vinput = new _buildInput(v.select,func.name,v.signature,v.validMessage,v.invalidMessage);					
+			var vinput = _buildInput(v.select,v.validate,v.args,v.signature,v.validMessage,v.invalidMessage);					
 			// run validations on each element
 			var jlen = vinput.elements.length;
 			for(var j = 0;j < jlen;j++){
@@ -247,14 +211,13 @@ var jsvalid = (function($){
 				var valid = false;
 				
 				// is the api user trying to use an api defined function or their own custom function?
-				var validator = jsvalid[func.name] ? jsvalid[func.name] : vinput.validate;
+				var validator = jsvalid[vinput.validate] ? jsvalid[vinput.validate] : vinput.validate;
 				// run validation function
-				valid = validator(results, $ele, func.args);	
+				valid = validator(results, $ele, vinput.args);	
 
-				// create validation object based on validation result
-				var args = func ? func.args : null;
-				if(valid) result = new _buildResult(eleId,vinput.signature,true,vinput.validMessage,args);
-				else result = new _buildResult(eleId,vinput.signature,false,vinput.invalidMessage,args);
+				// build result object
+				var resultMsg = valid ? vinput.validMessage : vinput.invalidMessage;
+				var result = _buildResult(eleId, vinput.signature, valid, resultMsg, vinput.args);
 
 				// add result to results list
 				results.push(result);
