@@ -202,15 +202,17 @@ var jsvalid = (function($){
 	 * 
 	 * returns a list of objects in this format:
 	 * 	{
-	 * 	validated field name which is the html in a field's label (string),
-	 *	is the field valid (boolean),
-	 *	validation message related to if the field is valid (string)
-	 *	}
+	 *	message: validation message related to if the field is valid (string)
+	 * 	name: validated field name which is the html in a field's label (string),
+	 *	selector: selector that can be used to find the validated field (string),
+	 *	signature: signature of the validation funciton run (string),
+	 *	valid: is the field valid (boolean),
+	 *	}	
 	 */
 	var _validate = function(validations){
 		// list of results to return
 		var results = [];
-
+		// loop through given validations
 		var len = validations.length;
 		for(var i = 0;i < len;i++){	
 			var v = validations[i];
