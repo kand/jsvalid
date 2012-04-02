@@ -1,3 +1,7 @@
+-------
+jsValid
+-------
+
 Simple Javascript validation framework built off jQuery.
 
 Define a list of validations to run then call validate(validations).
