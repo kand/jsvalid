@@ -126,6 +126,58 @@ var jsvalid = (function($){
 		return false;
 	};
 
+
+	// Matching dictionary for pattern matching validator
+	var _match = {};
+	// our special characters
+	_match['@'] = '[A-Za-z]';
+	_match['#'] = '\\d';
+	_match['?'] = '.';
+	// make sure special regex values are escaped
+	_match['.'] = '\\.';
+	_match['('] = '\\(';
+	_match[')'] = '\\)';
+	_match['{'] = '\\{';
+	_match['}'] = '\\}';
+	_match['['] = '\\[';
+	_match[']'] = '\\]';
+	_match['^'] = '\\^';
+	_match['$'] = '\\$';
+	_match['|'] = '\\|';
+	_match['*'] = '\\*';
+	_match['+'] = '\\+';
+
+	/**
+	 * Validate field based on a given pattern. Patterns follow this format:
+	 * 	@ = an alpha character (get @ with \@)
+	 *	# = a numeric character (get # with \#)
+	 * 	? = any character (get # with \?)
+	 *	any other character will validate as that character at that position
+	 *
+	 * results = results from validations already run
+	 * $element = element to run validation on
+	 * args = a list where the first value is the pattern to use for validations
+	 *
+	 * returns true if value matches given pattern, false otherwise
+	 */
+	var _validatePattern = function(results, $element, args){
+		var pattern = args[0];
+		var val = $element.val();
+
+		// parse pattern and build regex
+		var regex = '';
+		var len = pattern.length;
+		for(var i = 0;i < len;i++){
+			var c = pattern[i];
+			if(_match[c]) regex += _match[c];
+			else regex += c;
+		}
+
+		// match pattern to value and return
+		if(val.match(regex)) return true;
+		return false;
+	};
+
 	/**
 	 * Validate a given list of validations.
 	 *
@@ -190,15 +242,18 @@ var jsvalid = (function($){
 		messages: {
 			valid: {
 				required: '{0} has a value!',
-				lengthRange: '{0} has between {1} and {2} characters!'
+				lengthRange: '{0} has between {1} and {2} characters!',
+				pattern: '{0} is in the proper format!'
 			},
 			invalid: {
 				required: '{0} is required!',
-				lengthRange: '{0} must have between {1} and {2} characters!'
+				lengthRange: '{0} must have between {1} and {2} characters!',
+				pattern: '{0} is not in the proper format!'
 			}
 		},
 		validate: _validate,
 		required: _validateRequired,
-		lengthRange: _validateLengthRange
+		lengthRange: _validateLengthRange,
+		pattern: _validatePattern
 	};
 })($);

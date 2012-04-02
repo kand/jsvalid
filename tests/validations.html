@@ -15,15 +15,16 @@
 					{select:'#testForm input',validate:'required'},
 					{select:'#textIn2',validate:'lengthRange(2,10)'},
 					{select:'#textIn1',
-					validate:function(results, $element){
-						if($element.val() === 'valid value'){
-							return true;
-						}
-						return false;
-					},
-					validMessage:'The value of {0} is valid!',
-					invalidMessage:'The value of {0} must be "valid value".'}
-				];	
+						validate:function(results, $element){
+							if($element.val() === 'valid value'){
+								return true;
+							}
+							return false;
+						},
+						validMessage:'The value of {0} is valid!',
+						invalidMessage:'The value of {0} must be "valid value".'},
+					{select:'#textIn3',validate:'pattern(@@@-###-???-abc)'}
+				];
 
 				// override form submit
 				$testForm.submit(function(e){
@@ -44,7 +45,8 @@
 		<form id="testForm" name="testForm" method="POST">
 			<div id="errors"></div>
 			<label for="textIn1">Text Input 1</label>: <input id="textIn1" name="textIn1" type="text"/><br>
-			<label for="textIn2">Text Input 2</label>: <input id="textIn2" name="textIn2" type="text"/><br>			
+			<label for="textIn2">Text Input 2</label>: <input id="textIn2" name="textIn2" type="text"/><br>
+			<label for="textIn3">PATTERN INPUT</label>: <input id="textIn3" name="textIn3" type="text"/><br>
 
 			<button id="testFormSubmit" type="submit">Submit</button><br>
 		</form>
