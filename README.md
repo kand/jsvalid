@@ -11,8 +11,8 @@ Each validation within the list is an object following this pattern:
 	<b>signature</b>: signature to assign this validation, allows you to keep track of what validators
 		have been run. If not defined, will default to either 'undefined' if using your
 		own validation function, or to the name of the api function run. (string) (optional),
-	<b>validMessage</b>: message to give user when validation succeeds. (string),
-	<b>invalidMessage</b>: message to give user when validation fails. (string)
+	<b>validMessage</b>: message to give user when validation succeeds. (string) (optional),
+	<b>invalidMessage</b>: message to give user when validation fails. (string) (optional)
 }</code></pre>
 
 The validate function is run individually on each input selected. This function takes in 2 arguments:
