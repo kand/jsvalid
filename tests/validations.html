@@ -2,7 +2,16 @@
 <html>
 	<head>
 		<title>jsvalid Tests</title>
-		
+	
+		<style type="text/css">
+			.invalid{
+				color: red;
+			}
+			.valid{
+				color: green;
+			}
+		</style>
+	
 		<script type="text/javascript" src="jquery.js"></script>
 		<script type="text/javascript" src="../jsvalid.js"></script>
 		
@@ -21,9 +30,11 @@
 							}
 							return false;
 						},
+						signature: 'customSig',
 						validMessage:'The value of {0} is valid!',
 						invalidMessage:'The value of {0} must be "valid value".'},
-					{select:'#textIn3',validate:'pattern(@@@-###-???-abc)'}
+					{select:'#textIn3',validate:'pattern(@@@-###-???-abc)'},
+				
 				];
 
 				// override form submit
@@ -34,7 +45,12 @@
 					var $errors = $('#errors');
 					$errors.html('');
 					for(var i = 0;i < results.length;i++){
-						$errors.append(results[i].message + '<br>');
+						var result = results[i];
+						if(result.valid){
+							$errors.append('<span class="valid">' + result.message + '</span><br>');
+						} else {
+							$errors.append('<span class="invalid">' + result.message + '</span><br>');
+						}
 					}
 				});
 			});
@@ -47,7 +63,9 @@
 			<label for="textIn1">Text Input 1</label>: <input id="textIn1" name="textIn1" type="text"/><br>
 			<label for="textIn2">Text Input 2</label>: <input id="textIn2" name="textIn2" type="text"/><br>
 			<label for="textIn3">PATTERN INPUT</label>: <input id="textIn3" name="textIn3" type="text"/><br>
-
+<!--
+			<label for="checkIn1">Check Box 1</label>: <input id="checkIn4" name="checkIn1" type="checkbox" /><br>
+-->
 			<button id="testFormSubmit" type="submit">Submit</button><br>
 		</form>
 

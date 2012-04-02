@@ -4,17 +4,22 @@
 var jsvalid = (function($){
 	
 	/**
-	 * An object representing a validation input. Has the following properties:
+	 * Build an input for validation framework.
+	 * 
+	 * Inputs from user are transformed here to input useful to api.
+	 *
+	 * returns an object representing a validation input. Has the following properties:
 	 * 	elements = selected elements to run validations on
 	 *	validate = function to use for validation on each element in selection
+	 *	signature = signature of validation run
 	 * 	validMessage = message to return if validate returns true
 	 *	invalidMessage = message to return if validate returns false
 	 */
-	var _buildInput = function(select,validate,validMessage,invalidMessage){
+	var _buildInput = function(select,validate,signature,validMessage,invalidMessage){
 		// select elements with given selector		
 		var elements = $(select);
 
-		// if validate is a string user looking for api defined function, find related messages in api
+		// if validate is a string, user is looking for api defined function, find related messages in api
 		if(!validMessage && typeof(validate) === 'string' && jsvalid.messages.valid[validate]){
 			validMessage = jsvalid.messages.valid[validate];
 		}
@@ -22,23 +27,34 @@ var jsvalid = (function($){
 			invalidMessage = jsvalid.messages.invalid[validate];
 		}
 
+		// if signature was not provided, user is probably using an api defined signature
+		if(!signature && jsvalid[validate]){
+			signature = validate;
+		}
+
 		return {
 			elements: elements,
 			validate: validate,
+			signature: signature,
 			validMessage: validMessage,
 			invalidMessage: invalidMessage
 		};
 	};
 		
 	/**
-	 * An object representing a validation result. Has the following properties:
+	 * Builds a result from api output to be returned to the user.
+	 *
+	 * Inputs from api are transformed here into output useful to user.
+	 *
+	 * returns an object representing a validation result. Has the following properties:
 	 *	name = text inside field's label 
-	 *	selector = selector that can be used to find this field 
+	 *	selector = selector that can be used to find this field
+	 * 	signature = signature left by validation function so user knows what validation was run 
 	 * 	valid = true if field is valid, false otherwise 
 	 *	message = message related to validation
 	 */
-	var _buildResult = function(selector,valid,message,messageArgs){
-		// get the name of the element from the label
+	var _buildResult = function(selector,signature,valid,message,messageArgs){
+		// get the name of the element from the element's label
 		var eleId = $(selector).prop('id');
 		var $label = $('label[for="' + eleId + '"]');
 		var name = $label.html();	
@@ -62,6 +78,7 @@ var jsvalid = (function($){
 		return {
 			name: name,
 			selector: selector,
+			signature: signature,
 			valid: valid,
 			message: message
 		};
@@ -208,7 +225,7 @@ var jsvalid = (function($){
 			} 
 
 			// get validation object
-			var vinput = new _buildInput(v.select,func.name,v.validMessage,v.invalidMessage);					
+			var vinput = new _buildInput(v.select,func.name,v.signature,v.validMessage,v.invalidMessage);					
 			// run validations on each element
 			var jlen = vinput.elements.length;
 			for(var j = 0;j < jlen;j++){
@@ -226,8 +243,8 @@ var jsvalid = (function($){
 
 				// create validation object based on validation result
 				var args = func ? func.args : null;
-				if(valid) result = new _buildResult(eleId,true,vinput.validMessage,args);
-				else result = new _buildResult(eleId,false,vinput.invalidMessage,args);
+				if(valid) result = new _buildResult(eleId,vinput.signature,true,vinput.validMessage,args);
+				else result = new _buildResult(eleId,vinput.signature,false,vinput.invalidMessage,args);
 
 				// add result to results list
 				results.push(result);
