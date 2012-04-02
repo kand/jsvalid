@@ -198,7 +198,16 @@ var jsvalid = (function($){
 	/**
 	 * Validate a given list of validations.
 	 *
-	 * validations = a list of validations to run
+	 * validations = a list of validations to run. Each object in the list should have this format:
+	 *	{
+	 *	select: selector to use to find elements to apply validations to (string),
+	 *	validate: a string or function specifying what validation to use (string or function),
+	 *	validateArgs: a list of arguments to pass into a user defined validate function (list) (optional),
+	 *	signature: a function signature to give the validation, allows you to track what validations
+	 *		were run (string) (optional),
+	 *	validMessage: message to give when validation succeeds (string) (optional),
+	 *	invalidMessage: message to give when validation fails (string) (optional)
+	 *	}
 	 * 
 	 * returns a list of objects in this format:
 	 * 	{
@@ -224,6 +233,8 @@ var jsvalid = (function($){
 			};
 			if(typeof(v.validate) === 'string'){
 				func = _parseArgs(v.validate);
+			} else {
+				func.args = v.validateArgs;
 			} 
 
 			// get validation object
@@ -234,14 +245,11 @@ var jsvalid = (function($){
 				var $ele = $(vinput.elements[j]);
 				var eleId = '#' + $ele.prop('id');
 				var valid = false;
-
-				if(func && jsvalid[func.name]){
-					// run api defined
-					valid = jsvalid[func.name](results,$ele,func.args);
-				} else {
-					// run user defined validation
-					valid = vinput.validate(results,$ele);
-				}
+				
+				// is the api user trying to use an api defined function or their own custom function?
+				var validator = jsvailid[func.name] ? jsvalid[func.name] : vinput.validate;
+				// run validation function
+				valid = validator(results, $ele, func.args);	
 
 				// create validation object based on validation result
 				var args = func ? func.args : null;
