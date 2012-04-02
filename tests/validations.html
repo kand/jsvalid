@@ -30,6 +30,11 @@
 					e.preventDefault();
 					// run validations
 					var results = jsvalid.validate(validations);
+					var $errors = $('#errors');
+					$errors.html('');
+					for(var i = 0;i < results.length;i++){
+						$errors.append(results[i].message + '<br>');
+					}
 				});
 			});
 		</script>
@@ -37,6 +42,7 @@
 	<body>
 
 		<form id="testForm" name="testForm" method="POST">
+			<div id="errors"></div>
 			<label for="textIn1">Text Input 1</label>: <input id="textIn1" name="textIn1" type="text"/><br>
 			<label for="textIn2">Text Input 2</label>: <input id="textIn2" name="textIn2" type="text"/><br>			
 
