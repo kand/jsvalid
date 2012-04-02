@@ -21,8 +21,11 @@
 				
 				// define validations
 				var validations = [
+					// validation using api defined required function
 					{select:'#testForm input',validate:'required'},
+					// validation using api defined lengthRange function
 					{select:'#textIn2',validate:'lengthRange(2,10)'},
+					// validation using custom user defined function
 					{select:'#textIn1',
 						validate:function(results, $element){
 							if($element.val() === 'valid value'){
@@ -33,7 +36,10 @@
 						signature: 'customSig',
 						validMessage:'The value of {0} is valid!',
 						invalidMessage:'The value of {0} must be "valid value".'},
+					// validation using api defined pattern function
 					{select:'#textIn3',validate:'pattern(@@@-###-???-abc)'},
+					// validation using api defined lengthRange function with custom validation
+					//	signature and validation messages
 					{select:'#textIn1',validate:'lengthRange(2,10)',signature:'customRangeSig',
 						validMessage: 'This is a custom range VALID message for {0}!',
 						invalidMessage: 'This is custom range INVALID message for {0}!'}
@@ -44,6 +50,7 @@
 					e.preventDefault();
 					// run validations
 					var results = jsvalid.validate(validations);
+					// show validations on form
 					var $errors = $('#errors');
 					$errors.html('');
 					for(var i = 0;i < results.length;i++){
