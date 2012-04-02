@@ -247,7 +247,7 @@ var jsvalid = (function($){
 				var valid = false;
 				
 				// is the api user trying to use an api defined function or their own custom function?
-				var validator = jsvailid[func.name] ? jsvalid[func.name] : vinput.validate;
+				var validator = jsvalid[func.name] ? jsvalid[func.name] : vinput.validate;
 				// run validation function
 				valid = validator(results, $ele, func.args);	
 
