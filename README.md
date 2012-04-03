@@ -38,13 +38,13 @@ The result of validations follow this pattern:
 <pre><code>var validations = [ ... ];
 var results = jsvalid.validate(validations);
 
-results === {
+results === [{
 	<b>message</b>: validation message that goes along with validation result (string),
 	<b>name</b>: name of validated field which is the html contained in a field's label (string),
 	<b>selector</b>: selector that can be used to find the validated field (string),
 	<b>signature</b>: signature of the validated function that was run (string),
 	<b>valid</b>: boolean representing if the field valid is valid or not (boolean)
-}</pre></code>
+}, ... ]</pre></code>
 
 <h2>API Defined Validations</h2>
 <pre><code><b>required</b> = returns true if input has a value, false otherwise
