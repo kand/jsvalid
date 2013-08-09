@@ -280,4 +280,4 @@ var jsvalid = (function($){
 		lengthRange: _validateLengthRange,
 		pattern: _validatePattern
 	};
-})($);
+})(jQuery);
