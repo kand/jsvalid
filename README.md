@@ -10,7 +10,7 @@ Each validation within the list is an object following this pattern:
 <pre><code>{
 	<b>select</b>: jQuery selector to use for this validation. (string),
 	<b>validate</b>: either a string representing an api defined validation or a custom validation
-		function to run on each selected element. (string or func),
+		function to run on each selected element. Should return true if the field is valid, false otherwise. (string or func),
 	<b>args</b>: a list of arguments that is passed into the validation function. (string) (optional),
 	<b>signature</b>: signature to assign this validation, allows you to keep track of what validators
 		have been run. If not defined, will default to either 'undefined' if using your
