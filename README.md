@@ -59,3 +59,6 @@ results === [{
 - Add method to automatically apply validation to form elements that have special attributes or classes
 - Allow validMessage/invalidMessage to get arguments in the form of {keyName} instead of just integers so that arbirary maps can be used to format messages
 - Add license
+- Squash commits if possible
+- Allow args into validation functions to be objects intead of just lists
+- Allow select argument to be a jQuery object, not just a string
