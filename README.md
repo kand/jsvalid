@@ -62,3 +62,4 @@ results === [{
 - Squash commits if possible
 - Allow args into validation functions to be objects intead of just lists
 - Allow select argument to be a jQuery object, not just a string
+- Add a function callback to run after validation function has run
