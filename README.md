@@ -11,7 +11,7 @@ Each validation within the list is an object following this pattern:
 	<b>select</b>: jQuery selector to use for this validation. (string),
 	<b>validate</b>: either a string representing an api defined validation or a custom validation
 		function to run on each selected element. Should return true if the field is valid, false otherwise. (string or func),
-	<b>args</b>: a list of arguments that is passed into the validation function. (string) (optional),
+	<b>args</b>: a list of arguments that is passed into the validation function. (array) (optional),
 	<b>signature</b>: signature to assign this validation, allows you to keep track of what validators
 		have been run. If not defined, will default to either 'undefined' if using your
 		own validation function, or to the name of the api function run. (string) (optional),
@@ -37,7 +37,6 @@ The <b>validMessage</b> and <b>invalidMessage</b> values can contain variables i
 The result of validations follow this pattern:
 <pre><code>var validations = [ ... ];
 var results = jsvalid.validate(validations);
-
 results === [{
 	<b>message</b>: validation message that goes along with validation result (string),
 	<b>name</b>: name of validated field which is the html contained in a field's label (string),
@@ -47,13 +46,35 @@ results === [{
 }, ... ]</pre></code>
 
 <h2>API Defined Validations</h2>
-<pre><code><b>required</b> = returns true if input has a value, false otherwise
-<b>lengthRange(x,y)</b> = returns true if input value has length L where x &lt; L &lt; y, false otherwise
-<b>pattern(p)</b> = returns true if input matches given pattern p, false otherwise, p follows this syntax:
-	@ = any character A-Z or a-z
-	# = any number 0-9
-	? = any character
-	any other characters will be validated as that character at that position</code></pre>
+
+The following is a list of validations that come standard with this library. The function name can be used for the <b>validate</b> argument in any input object and the arguments are given as an array to the <b>args</b> argument in any input object.
+
+<table>
+	<tr>
+		<th>Function Name</th>
+		<th>Arguments</th>
+		<th>Description</th>
+	</tr>
+	<tr>
+		<td><b>required</b></td>
+		<td><i>none</i></td>
+		<td>returns <b>true</b> if input has a value, <b>false</b> otherwise</td>
+	</tr>
+	<tr>
+		<td><b>lengthRange</b></td>
+		<td><b>x</b>, <b>y</b></td>
+		<td>returns <b>true</b> if input value has length L where <b>x</b> &lt;= L &lt;= <b>y</b>, <b>false</b> otherwise</td>
+	</tr>
+	<tr>
+		<td><b>pattern<b></td>
+		<td><b>p</b></td>
+		<td>returns <b>true</b> if input matches given pattern <b>p</b>, <b>false</b> otherwise, <b>p</b> follows this syntax:<br>
+			@ = any character A-Z or a-z<br>
+			# = any number 0-9<br>
+			? = any character<br>
+			any other characters will be validated as that character at that position<br></td>
+	</tr>
+</table>
 
 <h2>TODO</h2>
 - Add method to automatically apply validation to form elements that have special attributes or classes
